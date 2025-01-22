@@ -493,8 +493,17 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 
 				<!-- Footer -->
 					<footer id="footer">
-						<p class="copyright">&copy; Kangogo Joel, 2024.</p>
-					</footer>
+						<p class="copyright">&copy; Kangogo Joel, <span id="currentYear"></span>.</p>
+						</footer>
+
+						<script>
+						document.addEventListener('DOMContentLoaded', function() {
+						var currentYearElement = document.getElementById('currentYear');
+						if (currentYearElement) {
+						currentYearElement.textContent = new Date().getFullYear();
+						}
+						});
+						</script>
 
 			</div>
 
