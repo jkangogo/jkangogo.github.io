@@ -275,6 +275,43 @@
 								        <li><input type="reset" value="Reset" /></li>
 								    </ul>
 								</form>
+								<script>
+								document.addEventListener('DOMContentLoaded', function() {
+								    var form = document.querySelector('form[action^="https://formspree.io/"]');
+								    if (form) {
+								        form.addEventListener('submit', function(e) {
+								            e.preventDefault();
+								            
+								            var xhr = new XMLHttpRequest();
+								            xhr.open('POST', form.action, true);
+								            xhr.setRequestHeader('Accept', 'application/json');
+								
+								            xhr.onload = function() {
+								                if (xhr.status === 200) {
+								                    // Redirect to your custom thank you page
+								                    var successUrl = form.getAttribute('data-success-url');
+								                    if (successUrl) {
+								                        window.location.href = successUrl;
+								                    } else {
+								                        // Fallback to Formspree default thank you page if successUrl not set
+								                        window.location.href = 'https://formspree.io/thanks';
+								                    }
+								                } else {
+								                    console.error('Form submission failed:', xhr.statusText);
+								                    // Optionally, you could handle errors here, like showing a message to the user
+								                }
+								            };
+								
+								            xhr.onerror = function() {
+								                console.error('Network error');
+								            };
+								
+								            var formData = new FormData(form);
+								            xhr.send(formData);
+								        });
+								    }
+								});
+								</script>
 								
 								<ul class="icons">
 									<li><a href="https://Github.com/jkangogo" class="icon brands fa-github"><span class="label">Github</span></a></li>
