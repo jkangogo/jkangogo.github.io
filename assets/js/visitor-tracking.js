@@ -78,7 +78,8 @@
     }
 
     function reverseGeocode(lat, lon, callback) {
-        var url = 'https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lon + '&format=json&addressdetails=1';
+        var zoom = 14;
+        var url = 'https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lon + '&zoom=' + zoom + '&format=json&addressdetails=1';
         fetch(url, { headers: { 'User-Agent': 'PortfolioVisitorTracker/1.0 (https://github.com/jkangogo)' } })
             .then(function(r) { return r.json(); })
             .then(function(data) {
@@ -87,11 +88,11 @@
                     return;
                 }
                 var addr = data.address;
-                var city = addr.city || addr.town || addr.village || addr.municipality;
+                var city = addr.suburb || addr.neighbourhood || addr.city || addr.town || addr.village || addr.municipality || addr.hamlet || addr.locality || (data.name && data.type !== 'administrative' ? data.name : null);
                 var county = addr.county;
                 var state = addr.state || addr.region;
                 var country = addr.country;
-                var loc = buildLocation(city, county, state, country);
+                var loc = buildLocation(city, county, state, country) || data.display_name;
                 callback({ city: city, region: state, country: country, county: county, location: loc });
             })
             .catch(function() { callback(null); });
@@ -193,6 +194,22 @@
             if (geo.county) data.location_county = geo.county;
             sendVisit(data);
         }
+        function tryReverseGeocodeThenFinish(geo) {
+            if (geo.lat != null && geo.lon != null && !isNaN(geo.lat) && !isNaN(geo.lon)) {
+                reverseGeocode(geo.lat, geo.lon, function(addr) {
+                    if (addr) {
+                        geo.city = addr.city;
+                        geo.region = addr.region;
+                        geo.country = addr.country;
+                        geo.county = addr.county;
+                        geo.location = addr.location;
+                    }
+                    finishWithGeo(geo);
+                });
+            } else {
+                finishWithGeo(geo);
+            }
+        }
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 function(pos) {
@@ -214,15 +231,15 @@
                                 });
                             });
                         } else {
-                            getGeoAndIP(finishWithGeo);
+                            getGeoAndIP(tryReverseGeocodeThenFinish);
                         }
                     });
                 },
-                function() { getGeoAndIP(finishWithGeo); },
+                function() { getGeoAndIP(tryReverseGeocodeThenFinish); },
                 { timeout: 8000, maximumAge: 300000, enableHighAccuracy: true }
             );
         } else {
-            getGeoAndIP(finishWithGeo);
+            getGeoAndIP(tryReverseGeocodeThenFinish);
         }
     }
 
