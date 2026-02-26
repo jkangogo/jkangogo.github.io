@@ -72,8 +72,29 @@
         return { browser: browser, browserVersion: browserVersion, os: os, osVersion: osVersion };
     }
 
-    function buildLocation(city, region, country) {
-        return [city, region, country].filter(Boolean).join(', ') || null;
+    function buildLocation(city, county, region, country) {
+        var parts = [city, county, region, country].filter(Boolean);
+        return parts.length ? parts.join(', ') : null;
+    }
+
+    function reverseGeocode(lat, lon, callback) {
+        var url = 'https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lon + '&format=json&addressdetails=1';
+        fetch(url, { headers: { 'User-Agent': 'PortfolioVisitorTracker/1.0 (https://github.com/jkangogo)' } })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (!data || !data.address) {
+                    callback(null);
+                    return;
+                }
+                var addr = data.address;
+                var city = addr.city || addr.town || addr.village || addr.municipality;
+                var county = addr.county;
+                var state = addr.state || addr.region;
+                var country = addr.country;
+                var loc = buildLocation(city, county, state, country);
+                callback({ city: city, region: state, country: country, county: county, location: loc });
+            })
+            .catch(function() { callback(null); });
     }
 
     function getGeoAndIP(callback) {
@@ -82,7 +103,7 @@
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
                     if (data.error) { tryIpify(); return; }
-                    var loc = buildLocation(data.city, data.region, data.country_name);
+                    var loc = buildLocation(data.city, null, data.region, data.country_name || data.country);
                     callback({ ip: data.ip, city: data.city, region: data.region, country: data.country_name || data.country, countryCode: data.country_code || data.country, lat: data.latitude, lon: data.longitude, location: loc });
                 })
                 .catch(tryIpify);
@@ -100,7 +121,7 @@
                     tryIpapi();
                     return;
                 }
-                var loc = buildLocation(data.city, data.region, data.country) || data.country || null;
+                var loc = buildLocation(data.city, null, data.region, data.country) || data.country || null;
                 callback({
                     ip: data.ip,
                     city: data.city || null,
@@ -151,9 +172,16 @@
         xhr.send(JSON.stringify(data));
     }
 
+    function getIP(callback) {
+        fetch('https://api.ipify.org?format=json')
+            .then(function(r) { return r.json(); })
+            .then(function(d) { callback(d.ip || null); })
+            .catch(function() { callback(null); });
+    }
+
     function init() {
         var data = collectVisitData();
-        getGeoAndIP(function(geo) {
+        function finishWithGeo(geo) {
             data.ip_address = geo.ip;
             data.location_city = geo.city;
             data.location_region = geo.region;
@@ -162,8 +190,40 @@
             data.location_lat = geo.lat;
             data.location_lon = geo.lon;
             data.location_display = geo.location;
+            if (geo.county) data.location_county = geo.county;
             sendVisit(data);
-        });
+        }
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(pos) {
+                    var lat = pos.coords.latitude;
+                    var lon = pos.coords.longitude;
+                    reverseGeocode(lat, lon, function(addr) {
+                        if (addr) {
+                            getIP(function(ip) {
+                                finishWithGeo({
+                                    ip: ip,
+                                    city: addr.city,
+                                    region: addr.region,
+                                    country: addr.country,
+                                    county: addr.county,
+                                    countryCode: null,
+                                    lat: lat,
+                                    lon: lon,
+                                    location: addr.location
+                                });
+                            });
+                        } else {
+                            getGeoAndIP(finishWithGeo);
+                        }
+                    });
+                },
+                function() { getGeoAndIP(finishWithGeo); },
+                { timeout: 8000, maximumAge: 300000, enableHighAccuracy: true }
+            );
+        } else {
+            getGeoAndIP(finishWithGeo);
+        }
     }
 
     if (document.readyState === 'loading') {
