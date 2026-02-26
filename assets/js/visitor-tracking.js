@@ -72,27 +72,47 @@
         return { browser: browser, browserVersion: browserVersion, os: os, osVersion: osVersion };
     }
 
+    function buildLocation(city, region, country) {
+        return [city, region, country].filter(Boolean).join(', ') || null;
+    }
+
     function getGeoAndIP(callback) {
-        fetch('https://ipapi.co/json/')
+        function tryIpapi() {
+            fetch('https://ipapi.co/json/', { headers: { 'User-Agent': 'PortfolioVisitorTracker/1.0' } })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.error) { tryIpify(); return; }
+                    var loc = buildLocation(data.city, data.region, data.country_name);
+                    callback({ ip: data.ip, city: data.city, region: data.region, country: data.country_name || data.country, countryCode: data.country_code || data.country, lat: data.latitude, lon: data.longitude, location: loc });
+                })
+                .catch(tryIpify);
+        }
+        function tryIpify() {
+            fetch('https://api.ipify.org?format=json')
+                .then(function(r) { return r.json(); })
+                .then(function(d) { callback({ ip: d.ip, city: null, region: null, country: null, countryCode: null, lat: null, lon: null, location: null }); })
+                .catch(function() { callback({ ip: null, city: null, region: null, country: null, countryCode: null, lat: null, lon: null, location: null }); });
+        }
+        fetch('https://get.geojs.io/v1/ip/geo.json')
             .then(function(r) { return r.json(); })
             .then(function(data) {
+                if (!data || !data.ip) {
+                    tryIpapi();
+                    return;
+                }
+                var loc = buildLocation(data.city, data.region, data.country) || data.country || null;
                 callback({
-                    ip: data.ip || null,
+                    ip: data.ip,
                     city: data.city || null,
                     region: data.region || null,
-                    country: data.country_name || null,
+                    country: data.country || null,
                     countryCode: data.country_code || null,
-                    lat: data.latitude || null,
-                    lon: data.longitude || null,
-                    location: [data.city, data.region, data.country_name].filter(Boolean).join(', ') || null
+                    lat: data.latitude ? parseFloat(data.latitude) : null,
+                    lon: data.longitude ? parseFloat(data.longitude) : null,
+                    location: loc
                 });
             })
-            .catch(function() {
-                fetch('https://api.ipify.org?format=json')
-                    .then(function(r) { return r.json(); })
-                    .then(function(d) { callback({ ip: d.ip || null, city: null, region: null, country: null, countryCode: null, lat: null, lon: null, location: null }); })
-                    .catch(function() { callback({ ip: null, city: null, region: null, country: null, countryCode: null, lat: null, lon: null, location: null }); });
-            });
+            .catch(tryIpapi);
     }
 
     function collectVisitData() {
