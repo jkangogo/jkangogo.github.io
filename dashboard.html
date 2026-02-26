@@ -170,8 +170,8 @@
         </div>
     </div>
 
-    <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/visitor-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         (function() {
             var config = window.VISITOR_CONFIG || {};
@@ -205,71 +205,54 @@
                     return;
                 }
 
-                var url = config.supabaseUrl + '/rest/v1/portfolio_visits?order=visited_at.desc&limit=100';
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', url, true);
-                xhr.setRequestHeader('apikey', config.supabaseKey);
-                xhr.setRequestHeader('Authorization', 'Bearer ' + config.supabaseKey);
-                xhr.setRequestHeader('Accept', 'application/json');
+                var supabase = window.supabase.createClient(config.supabaseUrl, config.supabaseKey);
+                supabase.from('portfolio_visits')
+                    .select('*')
+                    .order('visited_at', { ascending: false })
+                    .limit(100)
+                    .then(function(result) {
+                        var visits = result.data || [];
+                        var error = result.error;
 
-                xhr.onload = function() {
-                    if (xhr.status !== 200) {
-                        var errMsg = 'Error loading data (HTTP ' + xhr.status + '). ';
-                        try {
-                            var errBody = JSON.parse(xhr.responseText);
-                            if (errBody.message) errMsg += errBody.message;
-                            else if (errBody.error) errMsg += errBody.error;
-                        } catch (e) {
-                            errMsg += (xhr.responseText || 'Check Supabase table & RLS policies.');
+                        if (error) {
+                            document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Error: ' + (error.message || 'Failed to load data') + '</td></tr>';
+                            return;
                         }
-                        document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">' + errMsg + '</td></tr>';
-                        return;
-                    }
 
-                    var visits;
-                    try {
-                        visits = JSON.parse(xhr.responseText);
-                    } catch (e) {
-                        document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Invalid response from Supabase.</td></tr>';
-                        return;
-                    }
-                    var today = new Date().toDateString();
-                    var todayCount = visits.filter(function(v) {
-                        return new Date(v.visited_at).toDateString() === today;
-                    }).length;
-                    var ips = {};
-                    visits.forEach(function(v) {
-                        if (v.ip_address) ips[v.ip_address] = true;
+                        var today = new Date().toDateString();
+                        var todayCount = visits.filter(function(v) {
+                            return new Date(v.visited_at).toDateString() === today;
+                        }).length;
+                        var ips = {};
+                        visits.forEach(function(v) {
+                            if (v.ip_address) ips[v.ip_address] = true;
+                        });
+
+                        document.getElementById('stat-total').textContent = visits.length;
+                        document.getElementById('stat-today').textContent = todayCount;
+                        document.getElementById('stat-unique-ips').textContent = Object.keys(ips).length;
+
+                        var tbody = document.getElementById('visits-tbody');
+                        tbody.innerHTML = visits.length === 0
+                            ? '<tr><td colspan="6">No visits recorded yet.</td></tr>'
+                            : visits.map(function(v) {
+                                var date = new Date(v.visited_at);
+                                var dateStr = date.toLocaleString();
+                                var ua = v.user_agent || '-';
+                                var ref = v.referrer ? (v.referrer.length > 40 ? v.referrer.substring(0, 40) + '...' : v.referrer) : '-';
+                                return '<tr>' +
+                                    '<td>' + dateStr + '</td>' +
+                                    '<td>' + (v.ip_address || '-') + '</td>' +
+                                    '<td>' + (v.page_path || '/') + '</td>' +
+                                    '<td title="' + (v.referrer || '') + '">' + ref + '</td>' +
+                                    '<td class="user-agent-cell" title="' + ua + '">' + ua + '</td>' +
+                                    '<td>' + (v.timezone || '-') + '</td>' +
+                                    '</tr>';
+                            }).join('');
+                    })
+                    .catch(function(err) {
+                        document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Error: ' + (err.message || 'Failed to load visits') + '</td></tr>';
                     });
-
-                    document.getElementById('stat-total').textContent = visits.length;
-                    document.getElementById('stat-today').textContent = todayCount;
-                    document.getElementById('stat-unique-ips').textContent = Object.keys(ips).length;
-
-                    var tbody = document.getElementById('visits-tbody');
-                    tbody.innerHTML = visits.length === 0
-                        ? '<tr><td colspan="6"><strong>No visits showing?</strong> If you have data in Supabase Table Editor but see 0 here, add the <b>SELECT</b> RLS policy:<br><code style="display:block;margin-top:8px;padding:8px;background:#f0f0f0;border-radius:4px;font-size:12px;">create policy "Allow anonymous read" on portfolio_visits for select to anon using (true);</code><br><small>Run this in Supabase → SQL Editor, then refresh.</small></td></tr>'
-                        : visits.map(function(v) {
-                            var date = new Date(v.visited_at);
-                            var dateStr = date.toLocaleString();
-                            var ua = v.user_agent || '-';
-                            var ref = v.referrer ? (v.referrer.length > 40 ? v.referrer.substring(0, 40) + '...' : v.referrer) : '-';
-                            return '<tr>' +
-                                '<td>' + dateStr + '</td>' +
-                                '<td>' + (v.ip_address || '-') + '</td>' +
-                                '<td>' + (v.page_path || '/') + '</td>' +
-                                '<td title="' + (v.referrer || '') + '">' + ref + '</td>' +
-                                '<td class="user-agent-cell" title="' + ua + '">' + ua + '</td>' +
-                                '<td>' + (v.timezone || '-') + '</td>' +
-                                '</tr>';
-                        }).join('');
-                };
-
-                xhr.onerror = function() {
-                    document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Network error loading visits.</td></tr>';
-                };
-
-                xhr.send();
             };
         })();
     </script>
