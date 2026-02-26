@@ -185,21 +185,7 @@
                 document.getElementById('access-denied').style.display = 'block';
             }
 
-            function showDashboard() {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('access-denied').style.display = 'none';
-                document.getElementById('dashboard-content').style.display = 'block';
-                loadVisits();
-            }
-
-            if (!validKey || key !== config.dashboardSecret) {
-                showDenied();
-                return;
-            }
-
-            showDashboard();
-
-            window.loadVisits = function() {
+            function loadVisits() {
                 if (!config.supabaseUrl || !config.supabaseKey) {
                     document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Configure Supabase in visitor-config.js</td></tr>';
                     return;
@@ -253,7 +239,22 @@
                     .catch(function(err) {
                         document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Error: ' + (err.message || 'Failed to load visits') + '</td></tr>';
                     });
-            };
+            }
+
+            function showDashboard() {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('access-denied').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'block';
+                loadVisits();
+            }
+
+            if (!validKey || key !== config.dashboardSecret) {
+                showDenied();
+                return;
+            }
+
+            showDashboard();
+            window.loadVisits = loadVisits;
         })();
     </script>
 </body>
