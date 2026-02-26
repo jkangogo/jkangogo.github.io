@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Portfolio Analytics - Private</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/professional.css">
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .dashboard-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        .dashboard-header p {
+            color: var(--text-secondary);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .stat-card .label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .visits-table-wrapper {
+            overflow-x: auto;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .visits-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .visits-table th,
+        .visits-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .visits-table th {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        .visits-table tr:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+        .access-denied {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        .access-denied h2 {
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: var(--primary-dark);
+        }
+        .user-agent-cell {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .user-agent-cell:hover {
+            white-space: normal;
+            overflow: visible;
+        }
+        .refresh-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 1rem;
+        }
+        .refresh-btn:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Portfolio</a>
+        
+        <div id="access-denied" class="access-denied" style="display: none;">
+            <h2><i class="fas fa-lock"></i> Access Denied</h2>
+            <p>Invalid or missing access key. Use the correct URL to view analytics.</p>
+        </div>
+
+        <div id="dashboard-content" style="display: none;">
+            <div class="dashboard-header">
+                <h1><i class="fas fa-chart-bar"></i> Portfolio Visitor Analytics</h1>
+                <p>Private dashboard — who's visiting your portfolio</p>
+                <button class="refresh-btn" onclick="loadVisits()"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="number" id="stat-total">0</div>
+                    <div class="label">Total Visits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="stat-today">0</div>
+                    <div class="label">Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="stat-unique-ips">0</div>
+                    <div class="label">Unique IPs</div>
+                </div>
+            </div>
+
+            <div class="visits-table-wrapper">
+                <table class="visits-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>IP Address</th>
+                            <th>Page</th>
+                            <th>Referrer</th>
+                            <th>Device / Browser</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody id="visits-tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/visitor-config.js"></script>
+    <script>
+        (function() {
+            var config = window.VISITOR_CONFIG || {};
+            var params = new URLSearchParams(window.location.search);
+            var key = params.get('key');
+            var validKey = config.dashboardSecret && config.dashboardSecret !== 'CHANGE_THIS_TO_A_RANDOM_STRING';
+
+            function showDenied() {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'none';
+                document.getElementById('access-denied').style.display = 'block';
+            }
+
+            function showDashboard() {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('access-denied').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'block';
+                loadVisits();
+            }
+
+            if (!validKey || key !== config.dashboardSecret) {
+                showDenied();
+                return;
+            }
+
+            showDashboard();
+
+            window.loadVisits = function() {
+                if (!config.supabaseUrl || !config.supabaseKey) {
+                    document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Configure Supabase in visitor-config.js</td></tr>';
+                    return;
+                }
+
+                var url = config.supabaseUrl + '/rest/v1/portfolio_visits?order=visited_at.desc&limit=100';
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', url, true);
+                xhr.setRequestHeader('apikey', config.supabaseKey);
+                xhr.setRequestHeader('Authorization', 'Bearer ' + config.supabaseKey);
+
+                xhr.onload = function() {
+                    if (xhr.status !== 200) {
+                        document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Error loading data. Check Supabase config and RLS policies.</td></tr>';
+                        return;
+                    }
+
+                    var visits = JSON.parse(xhr.responseText);
+                    var today = new Date().toDateString();
+                    var todayCount = visits.filter(function(v) {
+                        return new Date(v.visited_at).toDateString() === today;
+                    }).length;
+                    var ips = {};
+                    visits.forEach(function(v) {
+                        if (v.ip_address) ips[v.ip_address] = true;
+                    });
+
+                    document.getElementById('stat-total').textContent = visits.length;
+                    document.getElementById('stat-today').textContent = todayCount;
+                    document.getElementById('stat-unique-ips').textContent = Object.keys(ips).length;
+
+                    var tbody = document.getElementById('visits-tbody');
+                    tbody.innerHTML = visits.length === 0
+                        ? '<tr><td colspan="6">No visits recorded yet.</td></tr>'
+                        : visits.map(function(v) {
+                            var date = new Date(v.visited_at);
+                            var dateStr = date.toLocaleString();
+                            var ua = v.user_agent || '-';
+                            var ref = v.referrer ? (v.referrer.length > 40 ? v.referrer.substring(0, 40) + '...' : v.referrer) : '-';
+                            return '<tr>' +
+                                '<td>' + dateStr + '</td>' +
+                                '<td>' + (v.ip_address || '-') + '</td>' +
+                                '<td>' + (v.page_path || '/') + '</td>' +
+                                '<td title="' + (v.referrer || '') + '">' + ref + '</td>' +
+                                '<td class="user-agent-cell" title="' + ua + '">' + ua + '</td>' +
+                                '<td>' + (v.timezone || '-') + '</td>' +
+                                '</tr>';
+                        }).join('');
+                };
+
+                xhr.onerror = function() {
+                    document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Network error loading visits.</td></tr>';
+                };
+
+                xhr.send();
+            };
+        })();
+    </script>
+</body>
+</html>
