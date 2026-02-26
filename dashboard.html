@@ -152,10 +152,12 @@
                         <tr>
                             <th>Date & Time</th>
                             <th>IP Address</th>
+                            <th>Location</th>
+                            <th>Browser</th>
+                            <th>OS</th>
+                            <th>User</th>
                             <th>Page</th>
                             <th>Referrer</th>
-                            <th>Device / Browser</th>
-                            <th>Location</th>
                         </tr>
                     </thead>
                     <tbody id="visits-tbody">
@@ -187,7 +189,7 @@
 
             function loadVisits() {
                 if (!config.supabaseUrl || !config.supabaseKey) {
-                    document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Configure Supabase in visitor-config.js</td></tr>';
+                    document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="8">Configure Supabase in visitor-config.js</td></tr>';
                     return;
                 }
 
@@ -201,7 +203,7 @@
                         var error = result.error;
 
                         if (error) {
-                            document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Error: ' + (error.message || 'Failed to load data') + '</td></tr>';
+                            document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="8">Error: ' + (error.message || 'Failed to load data') + '</td></tr>';
                             return;
                         }
 
@@ -220,24 +222,29 @@
 
                         var tbody = document.getElementById('visits-tbody');
                         tbody.innerHTML = visits.length === 0
-                            ? '<tr><td colspan="6">No visits recorded yet.</td></tr>'
+                            ? '<tr><td colspan="8">No visits recorded yet.</td></tr>'
                             : visits.map(function(v) {
                                 var date = new Date(v.visited_at);
                                 var dateStr = date.toLocaleString();
-                                var ua = v.user_agent || '-';
-                                var ref = v.referrer ? (v.referrer.length > 40 ? v.referrer.substring(0, 40) + '...' : v.referrer) : '-';
+                                var location = v.location_display || v.location_city || (v.location_country || '-');
+                                var browser = v.browser_name || '-';
+                                var os = v.os_name || '-';
+                                var user = v.user_name || '—';
+                                var ref = v.referrer ? (v.referrer.length > 35 ? v.referrer.substring(0, 35) + '...' : v.referrer) : '-';
                                 return '<tr>' +
                                     '<td>' + dateStr + '</td>' +
                                     '<td>' + (v.ip_address || '-') + '</td>' +
+                                    '<td>' + location + '</td>' +
+                                    '<td>' + browser + '</td>' +
+                                    '<td>' + os + '</td>' +
+                                    '<td>' + user + '</td>' +
                                     '<td>' + (v.page_path || '/') + '</td>' +
                                     '<td title="' + (v.referrer || '') + '">' + ref + '</td>' +
-                                    '<td class="user-agent-cell" title="' + ua + '">' + ua + '</td>' +
-                                    '<td>' + (v.timezone || '-') + '</td>' +
                                     '</tr>';
                             }).join('');
                     })
                     .catch(function(err) {
-                        document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Error: ' + (err.message || 'Failed to load visits') + '</td></tr>';
+                        document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="8">Error: ' + (err.message || 'Failed to load visits') + '</td></tr>';
                     });
             }
 
