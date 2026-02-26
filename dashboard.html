@@ -210,14 +210,29 @@
                 xhr.open('GET', url, true);
                 xhr.setRequestHeader('apikey', config.supabaseKey);
                 xhr.setRequestHeader('Authorization', 'Bearer ' + config.supabaseKey);
+                xhr.setRequestHeader('Accept', 'application/json');
 
                 xhr.onload = function() {
                     if (xhr.status !== 200) {
-                        document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Error loading data. Check Supabase config and RLS policies.</td></tr>';
+                        var errMsg = 'Error loading data (HTTP ' + xhr.status + '). ';
+                        try {
+                            var errBody = JSON.parse(xhr.responseText);
+                            if (errBody.message) errMsg += errBody.message;
+                            else if (errBody.error) errMsg += errBody.error;
+                        } catch (e) {
+                            errMsg += (xhr.responseText || 'Check Supabase table & RLS policies.');
+                        }
+                        document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">' + errMsg + '</td></tr>';
                         return;
                     }
 
-                    var visits = JSON.parse(xhr.responseText);
+                    var visits;
+                    try {
+                        visits = JSON.parse(xhr.responseText);
+                    } catch (e) {
+                        document.getElementById('visits-tbody').innerHTML = '<tr><td colspan="6">Invalid response from Supabase.</td></tr>';
+                        return;
+                    }
                     var today = new Date().toDateString();
                     var todayCount = visits.filter(function(v) {
                         return new Date(v.visited_at).toDateString() === today;
@@ -233,7 +248,7 @@
 
                     var tbody = document.getElementById('visits-tbody');
                     tbody.innerHTML = visits.length === 0
-                        ? '<tr><td colspan="6">No visits recorded yet.</td></tr>'
+                        ? '<tr><td colspan="6"><strong>No visits showing?</strong> If you have data in Supabase Table Editor but see 0 here, add the <b>SELECT</b> RLS policy:<br><code style="display:block;margin-top:8px;padding:8px;background:#f0f0f0;border-radius:4px;font-size:12px;">create policy "Allow anonymous read" on portfolio_visits for select to anon using (true);</code><br><small>Run this in Supabase → SQL Editor, then refresh.</small></td></tr>'
                         : visits.map(function(v) {
                             var date = new Date(v.visited_at);
                             var dateStr = date.toLocaleString();
