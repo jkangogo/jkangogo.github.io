@@ -45,6 +45,20 @@
         window.addEventListener('scroll', updateActiveNav);
         updateActiveNav();
 
+        // Scroll-triggered fade-in animations
+        var fadeElements = document.querySelectorAll('.card, .project-category, .skill-category, .contact-form');
+        var fadeObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('scroll-visible');
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        fadeElements.forEach(function(el) {
+            el.classList.add('scroll-fade');
+            fadeObserver.observe(el);
+        });
+
         // Formspree form handling - AJAX submit with redirect to thank you page
         var form = document.querySelector('form[action*="formspree.io"]');
         if (form) {
