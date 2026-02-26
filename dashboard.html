@@ -226,7 +226,14 @@
                             : visits.map(function(v) {
                                 var date = new Date(v.visited_at);
                                 var dateStr = date.toLocaleString();
-                                var location = v.location_display || v.location_city || (v.location_country || '-');
+                                var loc = v.location_display;
+                                if (!loc && (v.location_city || v.location_country)) {
+                                    loc = [v.location_city, v.location_county, v.location_region, v.location_country].filter(Boolean).join(', ');
+                                }
+                                if (loc && v.location_lat != null && v.location_lon != null && !isNaN(parseFloat(v.location_lat)) && !isNaN(parseFloat(v.location_lon))) {
+                                    loc += ' <small style="color:var(--text-secondary)">(' + parseFloat(v.location_lat).toFixed(4) + ', ' + parseFloat(v.location_lon).toFixed(4) + ')</small>';
+                                }
+                                var location = loc || v.timezone || '-';
                                 var browser = v.browser_name || '-';
                                 var os = v.os_name || '-';
                                 var user = v.user_name || '—';
