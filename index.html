@@ -16,6 +16,8 @@
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="images/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,6 +26,8 @@
     <link rel="stylesheet" href="assets/css/professional.css">
 </head>
 <body>
+    <!-- Skip to main content (accessibility) -->
+    <a href="#home" class="skip-link">Skip to main content</a>
     <!-- Fixed Navigation -->
     <header>
         <nav class="nav" aria-label="Main navigation">
@@ -33,6 +37,7 @@
                     <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
                         <span class="hamburger"></span>
                     </button>
+                    <div class="nav-backdrop" aria-hidden="true"></div>
                     <div class="nav-links">
                         <a href="#home" class="nav-link active">Home</a>
                         <a href="#about" class="nav-link">About</a>
@@ -54,7 +59,7 @@
                 <p class="header-greeting">Hi, I'm</p>
                 <img src="images/logo.png" alt="Joel Kangogo" class="header-avatar">
                 <h1 class="header-title">Joel Kangogo</h1>
-                <h2 class="header-subtitle">Software Engineer <span class="header-subtitle-divider">|</span> Mobile <span class="header-subtitle-dot">•</span> Web <span class="header-subtitle-dot"></span>•</span> AI <span class="header-subtitle-dot">•</span> IoT</h2>
+                <h2 class="header-subtitle">Software Engineer <span class="header-subtitle-divider">|</span> Mobile <span class="header-subtitle-dot">•</span> Web <span class="header-subtitle-dot">•</span> AI <span class="header-subtitle-dot">•</span> IoT</h2>
                 <p class="header-description">
                     Innovative software engineer with expertise in mobile, web, AI, and IoT integration/development. 
                     Skilled in RFID/NFC/BLE programming and technical writing, with a focus on R&D and tech mentorship. 
@@ -105,11 +110,11 @@
                 </p>
                 
                 <p>
-                    Since 2022, I have been at <a href="https://www.j-class.com/" target="_blank">J-Class Solutions Inc.</a>, where I develop RFID, NFC, and BLE solutions for IoT home automation, and contribute to AI-driven features such as an LLM-based autocomplete application.
+                    Since 2022, I have been at <a href="https://www.j-class.com/" target="_blank" rel="noopener noreferrer">J-Class Solutions Inc.</a>, where I develop RFID, NFC, and BLE solutions for IoT home automation, and contribute to AI-driven features such as an LLM-based autocomplete application.
                 </p>
 
                 <p>
-                    I am also a Vetted Software Engineer (<a href="https://www.learningdollars.com/freelancer/profile/?erid=joelk" target="_blank">JoelK</a>) at <a href="https://www.learningdollars.com/" target="_blank">LD Talent</a>, where I build mobile and web applications with a focus on usability and clean design—from coding and wireframing to technical blog review.
+                    I am also a Vetted Software Engineer (<a href="https://www.learningdollars.com/freelancer/profile/?erid=joelk" target="_blank" rel="noopener noreferrer">JoelK</a>) at <a href="https://www.learningdollars.com/" target="_blank" rel="noopener noreferrer">LD Talent</a>, where I build mobile and web applications with a focus on usability and clean design—from coding and wireframing to technical blog review.
                 </p>
                 
                 <p>
@@ -212,7 +217,7 @@
                 <p class="project-category-intro">Cross-platform Flutter apps and native Android apps built in Java/Kotlin, delivering intuitive UX and robust performance. Shipped products available on the Play Store.</p>
                 <div class="projects-grid">
                     <div class="project-card project-card-featured">
-                        <img src="images/Litshelf.png" alt="LitShelf, Online Book Repository" class="project-image">
+                        <img src="images/Litshelf.png" alt="LitShelf, Online Book Repository" class="project-image" loading="eager">
                         <div class="project-content">
                             <span class="project-badge">Flagship</span>
                             <h3 class="project-title">LitShelf, Online Book Repository</h3>
@@ -225,12 +230,12 @@
                                 <span class="tech-tag">Retrofit</span>
                             </div>
                             <div class="project-links">
-                                <a href="https://play.google.com/store/apps/details?id=com.joel.litshelf" target="_blank"><i class="fab fa-google-play"></i> Play Store</a>
+                                <a href="https://play.google.com/store/apps/details?id=com.joel.litshelf" target="_blank" rel="noopener noreferrer"><i class="fab fa-google-play"></i> Play Store</a>
                             </div>
                         </div>
                     </div>
                     <div class="project-card">
-                        <img src="images/tic-tac-toe.png" alt="Tic-tac-toe Board Game" class="project-image">
+                        <img src="images/tic-tac-toe.png" alt="Tic-tac-toe Board Game" class="project-image" loading="lazy">
                         <div class="project-content">
                             <h3 class="project-title">Tic-tac-toe Board Game</h3>
                             <p class="project-description">Strategic 3×3 game with unbeatable AI (Minimax) and local multiplayer. Live on Play Store; sharpens logical thinking for casual and competitive players.</p>
@@ -240,12 +245,12 @@
                                 <span class="tech-tag">Minimax</span>
                             </div>
                             <div class="project-links">
-                                <a href="https://play.google.com/store/apps/details?id=com.threemsystems.kangsgame" target="_blank"><i class="fab fa-google-play"></i> Play Store</a>
+                                <a href="https://play.google.com/store/apps/details?id=com.threemsystems.kangsgame" target="_blank" rel="noopener noreferrer"><i class="fab fa-google-play"></i> Play Store</a>
                             </div>
                         </div>
                     </div>
                     <div class="project-card">
-                        <img src="images/studentcapture.PNG" alt="Student Attendance System" class="project-image">
+                        <img src="images/studentcapture.PNG" alt="Student Attendance System" class="project-image" loading="lazy">
                         <div class="project-content">
                             <h3 class="project-title">Student Attendance System</h3>
                             <p class="project-description">Biometric attendance tracking with Suprema fingerprint scanner. Secure, offline-capable identification for educational institutions.</p>
@@ -256,12 +261,12 @@
                                 <span class="tech-tag">Biometric</span>
                             </div>
                             <div class="project-links">
-                                <a href="https://github.com/jkangogo/StudentAttendanceCapture" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                                <a href="https://github.com/jkangogo/StudentAttendanceCapture" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub</a>
                             </div>
                         </div>
                     </div>
                     <div class="project-card">
-                        <img src="images/chat.PNG" alt="Real-time Chat Application" class="project-image">
+                        <img src="images/chat.PNG" alt="Real-time Chat Application" class="project-image" loading="lazy">
                         <div class="project-content">
                             <h3 class="project-title">Real-time Chat Application</h3>
                             <p class="project-description">Secure messaging with Firebase real-time sync and FCM. Enables instant communication between registered users with cloud persistence.</p>
@@ -272,7 +277,7 @@
                                 <span class="tech-tag">SQLite + Room</span>
                             </div>
                             <div class="project-links">
-                                <a href="https://github.com/jkangogo/Lets_Connect" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                                <a href="https://github.com/jkangogo/Lets_Connect" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub</a>
                             </div>
                         </div>
                     </div>
@@ -285,7 +290,7 @@
                 <p class="project-category-intro">Scalable web and full-stack solutions for property management, e-commerce, and government workflows. Built for reliability and long-term maintainability.</p>
                 <div class="projects-grid">
                     <div class="project-card">
-                        <img src="images/pmweb.PNG" alt="Rental Management System" class="project-image">
+                        <img src="images/pmweb.PNG" alt="Rental Management System" class="project-image" loading="lazy">
                         <div class="project-content">
                             <h3 class="project-title">Rental Management System</h3>
                             <p class="project-description">End-to-end property and tenant management with automated financials, statements, and client records. Web and mobile versions for landlords and property managers.</p>
@@ -296,12 +301,12 @@
                                 <span class="tech-tag">RESTful APIs</span>
                             </div>
                             <div class="project-links">
-                                <a href="https://github.com/jkangogo/3Modern-PropertyManager" target="_blank"><i class="fab fa-github"></i> GitHub</a> <a href="http://3modernsystems.co.ke/threepmanager" target="_blank"><i class="fas fa-external-link-alt"></i> Web project</a>
+                                <a href="https://github.com/jkangogo/3Modern-PropertyManager" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub</a> <a href="http://3modernsystems.co.ke/threepmanager" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Web project</a>
                             </div>
                         </div>
                     </div>
                     <div class="project-card">
-                        <img src="images/lims.png" alt="Legislative Information Management System" class="project-image">
+                        <img src="images/lims.png" alt="Legislative Information Management System" class="project-image" loading="lazy">
                         <div class="project-content">
                             <h3 class="project-title">Legislative Information Management System (LIMS)</h3>
                             <p class="project-description">Parliamentary business platform for petitions, bills, motions, and papers. Secure, scalable architecture with standards-based integrations for the National Assembly of Kenya.</p>
@@ -319,7 +324,7 @@
                         </div>
                     </div>
                     <div class="project-card">
-                        <img src="images/foxsport.png" alt="Fox Sports Centre E-Commerce Platform" class="project-image">
+                        <img src="images/foxsport.png" alt="Fox Sports Centre E-Commerce Platform" class="project-image" loading="lazy">
                         <div class="project-content">
                             <h3 class="project-title">Fox Sports Centre E-Commerce Platform</h3>
                             <p class="project-description">Full e-commerce site for sports gear in Kenya. Payment gateways, inventory, and SEO-driven UX; delivered 130%+ engagement lift. Live at foxsportscentre.co.ke.</p>
@@ -329,12 +334,12 @@
                                 <span class="tech-tag">JavaScript</span>
                             </div>
                             <div class="project-links">
-                                <a href="https://foxsportscentre.co.ke" target="_blank"><i class="fas fa-external-link-alt"></i> Live Website</a>
+                                <a href="https://foxsportscentre.co.ke" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Live Website</a>
                             </div>
                         </div>
                     </div>
                     <div class="project-card">
-                        <img src="https://www.wearetech.africa/media/k2/items/cache/28b32a6d1a10f7b79a19f11bec606ba7_XL.jpg" alt="Kenya National Software Centre of Excellence" class="project-image">
+                        <img src="https://www.wearetech.africa/media/k2/items/cache/28b32a6d1a10f7b79a19f11bec606ba7_XL.jpg" alt="Kenya National Software Centre of Excellence" class="project-image" loading="lazy">
                         <div class="project-content">
                             <h3 class="project-title">Kenya National Software Centre of Excellence (KNSCoE)</h3>
                             <p class="project-description">Led software team for KoTDA & MICDE initiative to establish Kenya's flagship software engineering centre. Strategic project management, capacity-building, and alignment with international standards.</p>
@@ -356,7 +361,7 @@
                 <p class="project-category-intro">ML-powered applications from symptom-based diagnosis to AI summarization. Combines classical algorithms with modern LLM integration.</p>
                 <div class="projects-grid">
                     <div class="project-card">
-                        <img src="images/Litshelf.png" alt="LitShelf AI Summarization" class="project-image">
+                        <img src="images/Litshelf.png" alt="LitShelf AI Summarization" class="project-image" loading="lazy">
                         <div class="project-content">
                             <h3 class="project-title">LitShelf — AI Summarization</h3>
                             <p class="project-description">OpenRouter-powered book summarization for quick insights. Enables readers to grasp key ideas without full reads—integrated into the flagship LitShelf app.</p>
@@ -366,12 +371,12 @@
                                 <span class="tech-tag">Firebase</span>
                             </div>
                             <div class="project-links">
-                                <a href="https://play.google.com/store/apps/details?id=com.joel.litshelf" target="_blank"><i class="fab fa-google-play"></i> Play Store</a>
+                                <a href="https://play.google.com/store/apps/details?id=com.joel.litshelf" target="_blank" rel="noopener noreferrer"><i class="fab fa-google-play"></i> Play Store</a>
                             </div>
                         </div>
                     </div>
                     <div class="project-card">
-                        <img src="images/mdiagnosis.PNG" alt="Healthcare Decision Support System" class="project-image">
+                        <img src="images/mdiagnosis.PNG" alt="Healthcare Decision Support System" class="project-image" loading="lazy">
                         <div class="project-content">
                             <h3 class="project-title">Healthcare Decision Support System</h3>
                             <p class="project-description">Naive Bayes–based symptom-to-disease inference with nearest-facility navigation. Knowledge-base model for accessible preliminary diagnosis support.</p>
@@ -382,12 +387,12 @@
                                 <span class="tech-tag">GPS API</span>
                             </div>
                             <div class="project-links">
-                                <a href="https://github.com/jkangogo/M-diagnosis" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                                <a href="https://github.com/jkangogo/M-diagnosis" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub</a>
                             </div>
                         </div>
                     </div>
                     <div class="project-card">
-                        <img src="images/tic-tac-toe.png" alt="Tic-tac-toe Minimax AI" class="project-image">
+                        <img src="images/tic-tac-toe.png" alt="Tic-tac-toe Minimax AI" class="project-image" loading="lazy">
                         <div class="project-content">
                             <h3 class="project-title">Tic-tac-toe — Minimax AI</h3>
                             <p class="project-description">Unbeatable single-player mode using the Minimax algorithm. Demonstrates game-theoretic AI for optimal play and draw-forcing strategy.</p>
@@ -397,7 +402,7 @@
                                 <span class="tech-tag">Game AI</span>
                             </div>
                             <div class="project-links">
-                                <a href="https://play.google.com/store/apps/details?id=com.threemsystems.kangsgame" target="_blank"><i class="fab fa-google-play"></i> Play Store</a>
+                                <a href="https://play.google.com/store/apps/details?id=com.threemsystems.kangsgame" target="_blank" rel="noopener noreferrer"><i class="fab fa-google-play"></i> Play Store</a>
                             </div>
                         </div>
                     </div>
@@ -410,7 +415,7 @@
                 <p class="project-category-intro">Hardware-integrated solutions using RFID, NFC, and BLE for smart home control, access management, and device automation.</p>
                 <div class="projects-grid">
                     <div class="project-card">
-                        <img src="images/NFC_RFID.PNG" alt="NFC-RFID IoT Project" class="project-image">
+                        <img src="images/NFC_RFID.PNG" alt="NFC-RFID IoT Project" class="project-image" loading="lazy">
                         <div class="project-content">
                             <h3 class="project-title">NFC-RFID IoT Project</h3>
                             <p class="project-description">RFID/NFC reader-writer on Raspberry Pi and Odroid with RC522. Controls devices via RF, NFC, and BLE—music, lighting, door access, and item tracking.</p>

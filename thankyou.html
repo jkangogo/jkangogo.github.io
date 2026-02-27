@@ -2,89 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kangogo Joel</title>
+    <title>Thank You - Joel Kangogo</title>
+    <link rel="icon" type="image/x-icon" href="images/logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/professional.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
+        .thankyou-page {
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-            transition: background-color 0.5s ease; /* Smooth background color transition */
+            justify-content: center;
+            padding: 2rem;
         }
-
-        .container {
+        .thankyou-card {
             text-align: center;
-            background-color: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            animation: fadeInUp 0.8s ease-out; /* Fade in and slide up animation */
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(17, 34, 64, 0.95) 100%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 3rem;
+            max-width: 500px;
+            box-shadow: var(--shadow-card);
+            animation: fadeInUp 0.6s ease-out;
         }
-
-        h1 {
-            color: #2c3e50;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            opacity: 0;
-            animation: fadeIn 1s forwards 0.4s; /* Fade in animation with delay */
+        .thankyou-card h1 {
+            color: var(--text-heading);
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
         }
-
-        p {
-            font-size: 1.2em;
-            line-height: 1.6;
-            opacity: 0;
-            animation: fadeIn 1s forwards 0.8s; /* Fade in animation with delay */
+        .thankyou-card p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
         }
-
+        .thankyou-card .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Hover effect for fun */
-        body:hover {
-            background-color: #e9ebee;
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Thank you for contacting Joel!</h1>
-        <p>He will get back to you shortly</p>
+    <div class="thankyou-page">
+        <div class="thankyou-card">
+            <h1><i class="fas fa-check-circle" style="color: var(--accent);"></i> Thank you!</h1>
+            <p>Your message has been sent. Joel will get back to you shortly.</p>
+            <a href="index.html" class="btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Portfolio
+            </a>
+        </div>
     </div>
 
     <script src="assets/js/visitor-config.js"></script>
     <script src="assets/js/visitor-tracking.js"></script>
-    <script>
-        // Small script for a dynamic background color change over time
-        function changeBackgroundColor() {
-            const colors = ['#f4f4f4', '#e9ebee', '#dfe6e9', '#b2bec3', '#dfe6e9']; // A range of light colors
-            let i = 0;
-            setInterval(() => {
-                document.body.style.backgroundColor = colors[i];
-                i = (i + 1) % colors.length;
-            }, 5000); // Change every 5 seconds
-        }
-        changeBackgroundColor();
-    </script>
 </body>
 </html>
