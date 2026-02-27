@@ -14,19 +14,31 @@
         // Mobile hamburger toggle
         var navToggle = document.querySelector('.nav-toggle');
         var navLinks = document.querySelector('.nav-links');
+        var navBackdrop = document.querySelector('.nav-backdrop');
+        function closeMobileNav() {
+            if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+            if (navLinks) navLinks.classList.remove('is-open');
+            if (navBackdrop) navBackdrop.classList.remove('is-visible');
+            document.body.classList.remove('nav-menu-open');
+            document.body.style.overflow = '';
+        }
         if (navToggle && navLinks) {
             navToggle.addEventListener('click', function() {
                 var expanded = this.getAttribute('aria-expanded') === 'true';
                 this.setAttribute('aria-expanded', !expanded);
                 navLinks.classList.toggle('is-open', !expanded);
+                if (navBackdrop) navBackdrop.classList.toggle('is-visible', !expanded);
+                document.body.classList.toggle('nav-menu-open', !expanded);
                 document.body.style.overflow = expanded ? '' : 'hidden';
             });
+            if (navBackdrop) navBackdrop.addEventListener('click', closeMobileNav);
             navLinks.querySelectorAll('.nav-link').forEach(function(link) {
-                link.addEventListener('click', function() {
-                    navToggle.setAttribute('aria-expanded', 'false');
-                    navLinks.classList.remove('is-open');
-                    document.body.style.overflow = '';
-                });
+                link.addEventListener('click', closeMobileNav);
+            });
+            document.addEventListener('click', function(e) {
+                if (!navLinks.classList.contains('is-open')) return;
+                if (navLinks.contains(e.target) || (navToggle && navToggle.contains(e.target))) return;
+                closeMobileNav();
             });
         }
 
@@ -78,16 +90,28 @@
             fadeObserver.observe(el);
         });
 
-        // Formspree form handling - AJAX submit with redirect to thank you page
+        // Formspree form handling - AJAX submit with loading state
         var form = document.querySelector('form[action*="formspree.io"]');
         if (form) {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
+                var submitBtn = form.querySelector('button[type="submit"]');
+                var originalText = submitBtn ? submitBtn.innerHTML : '';
+
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                }
+
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', form.action, true);
                 xhr.setRequestHeader('Accept', 'application/json');
 
                 xhr.onload = function() {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }
                     if (xhr.status === 200) {
                         var successUrl = form.getAttribute('data-success-url');
                         window.location.href = successUrl || 'thankyou.html';
@@ -97,6 +121,10 @@
                 };
 
                 xhr.onerror = function() {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }
                     alert('Network error. Please try again.');
                 };
 
