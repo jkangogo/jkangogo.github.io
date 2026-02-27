@@ -11,6 +11,25 @@
             yearEl.textContent = new Date().getFullYear();
         }
 
+        // Mobile hamburger toggle
+        var navToggle = document.querySelector('.nav-toggle');
+        var navLinks = document.querySelector('.nav-links');
+        if (navToggle && navLinks) {
+            navToggle.addEventListener('click', function() {
+                var expanded = this.getAttribute('aria-expanded') === 'true';
+                this.setAttribute('aria-expanded', !expanded);
+                navLinks.classList.toggle('is-open', !expanded);
+                document.body.style.overflow = expanded ? '' : 'hidden';
+            });
+            navLinks.querySelectorAll('.nav-link').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    navToggle.setAttribute('aria-expanded', 'false');
+                    navLinks.classList.remove('is-open');
+                    document.body.style.overflow = '';
+                });
+            });
+        }
+
         // Smooth scroll for nav links
         document.querySelectorAll('.nav-link[href^="#"]').forEach(function(link) {
             link.addEventListener('click', function(e) {
